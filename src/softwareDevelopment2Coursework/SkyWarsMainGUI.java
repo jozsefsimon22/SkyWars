@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -14,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
@@ -23,23 +25,9 @@ import grid.*;
 public class SkyWarsMainGUI extends JFrame {
 
 	private JPanel contentPane;
+	private JLabel gameStatus;
 	private Grid gameGrid;
-
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					SkyWarsMainGUI frame = new SkyWarsMainGUI();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	
 
 	/**
 	 * Create the frame.
@@ -65,8 +53,9 @@ public class SkyWarsMainGUI extends JFrame {
 		// Add a border around the status bar for better separation
 		statusbar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		JLabel gameStatus = new JLabel("Status: VARIABLE");
+		gameStatus = new JLabel("Status: VARIABLE");
 		statusbar.add(gameStatus);
+
 
 		// Add a vertical strut for spacing between components
 		statusbar.add(Box.createVerticalStrut(20));
@@ -97,7 +86,6 @@ public class SkyWarsMainGUI extends JFrame {
 
 		// Add the status bar to the main content pane
 		contentPane.add(statusbar, BorderLayout.EAST);
-
 		
 		
 		//JPanel for the game grid
@@ -113,6 +101,7 @@ public class SkyWarsMainGUI extends JFrame {
 		    	final int row = i;
 		    	final int col = j;
 		        JButton button = new JButton();
+		        
 		        // Add action listeners or customise the appearance of the button as needed.
 		        button.addActionListener(new ActionListener() {
 					@Override
@@ -120,12 +109,27 @@ public class SkyWarsMainGUI extends JFrame {
 		        		Square square =  gameGrid.getMap()[row][col];
 		        		
 		        		JOptionPane.showMessageDialog(button, "Square at row " + row + ", column " + col + " clicked");
+		        		
+		        		ImageIcon imageIcon = new ImageIcon("master.png");
+		        		
+		        		
+		        		Image masterShip = imageIcon.getImage();
+		        		Image scaledMasterShip = masterShip.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
+		        		imageIcon = new ImageIcon(scaledMasterShip);
+		        		
+		        		button.setIcon(imageIcon);
 		        	}
 		        });
 		        grid.add(button);
 		    }// end inner for loop
 		}//end for loop
 		//END GRID
-		
+
 	}// end GUI
+	
+	// Method to update game status
+	public void updateGameStatus(String status) {
+		gameStatus.setText("Status: " + status);
+	}
+	
 }// end class

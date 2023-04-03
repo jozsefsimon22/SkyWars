@@ -1,6 +1,12 @@
 package softwareDevelopment2Coursework;
 
 import ships.*;
+
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 import grid.*;
 import grid.Square;
 
@@ -8,33 +14,31 @@ public class SkyWars {
 
 	public static void main(String[] args) {
 		
-		ShipGenerator ship = new ShipGenerator();
+		ImageIcon imageIcon = new ImageIcon("master.png");
 		
-		Ship s1 = ship.newShip();
-		Ship s2 = ship.newShip();
-		Ship s3 = ship.newShip();
+		
+		Image masterShip = imageIcon.getImage();
+		Image scaledMasterShip = masterShip.getScaledInstance(20, 20, masterShip.SCALE_SMOOTH);
+		imageIcon = new ImageIcon(scaledMasterShip);
+		
+		
+		
+		
+		
+        
+        
+//        button.setIcon(imageIcon);
+		
+		ShipGenerator ship = new ShipGenerator();
 		
 		Grid map = new Grid();
 		
 		SkyWarsMainGUI gameWindow = new SkyWarsMainGUI(map);
 		gameWindow.setVisible(true);
 		
+		String test = JOptionPane.showInputDialog("Enter a name");
 		
-		Square target = map.getMap()[0][0];
-		
-		
-
-		target.addEnemyShip(s1);
-		target.addEnemyShip(s2);
-		target.addEnemyShip(s3);
-		
-		System.out.println(target.getEnemyShipsAtSquare().get(0).getType());
-		System.out.println(target.getEnemyShipsAtSquare().get(1).getType());
-		System.out.println(target.getEnemyShipsAtSquare().get(2).getType());
-		System.out.println(target.getEnemyShipsAtSquare().remove(s1));
-		System.out.println(target.getEnemyShipsAtSquare().get(0).getType());
-		System.out.println(target.getEnemyShipsAtSquare().get(1).getType());
-//		System.out.println(target.getEnemyShipsAtSquare().get(2).getType());
+		gameWindow.updateGameStatus(test);
 		
 	}
 }
