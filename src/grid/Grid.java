@@ -21,7 +21,11 @@ public class Grid {
 		return map;
 	}
 	
-	
-	
-	
+	public Square getSquare(int row, int column) {
+	    return this.map[row][column];
+	}
+
+	public void setSquare(int row, int column, Square square) {
+	    this.map[row][column] = square;
+	}	
 }

@@ -24,7 +24,6 @@ public class SkyWars {
 		
 		
 		
-		
         
         
 //        button.setIcon(imageIcon);
@@ -33,8 +32,12 @@ public class SkyWars {
 		
 		Grid map = new Grid();
 		
+		System.out.println(map.getSquare(0, 0).isMasterShipAtSquare());
+		
 		SkyWarsMainGUI gameWindow = new SkyWarsMainGUI(map);
 		gameWindow.setVisible(true);
+		
+		System.out.println(map.getSquare(0, 0).isMasterShipAtSquare());
 		
 		String test = JOptionPane.showInputDialog("Enter a name");
 		
