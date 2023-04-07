@@ -1,61 +1,85 @@
+// SkyWarsMainGUI.java
 package softwareDevelopment2Coursework;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Color;
+import java.util.function.BiConsumer;
 
 import grid.*;
 
 public class SkyWarsMainGUI extends JFrame {
+    private JPanel contentPane;
+    private JLabel gameStatus;
+    private ImageIcon masterShipIcon;
 
-	private JPanel contentPane;
-	private JLabel gameStatus;
-	private Grid gameGrid;
-	private int prevRow = -1;
-	private int prevCol = -1;
-	private JButton prevButton = null;
-	private ImageIcon imageIcon;
+    public SkyWarsMainGUI() {
+        initialize();
+    }
 
-	public SkyWarsMainGUI(Grid map) {
-		this.gameGrid = map;
-		initialize();
-	}
+    private void initialize() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 1280, 720);
+        contentPane = new JPanel();
+        contentPane.setBackground(Color.WHITE);
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(new BorderLayout());
 
-	private void initialize() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1280, 720);
-		contentPane = new JPanel();
-		contentPane.setBackground(Color.WHITE);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout());
+        createStatusBar();
+        createGrid();
 
-		createStatusBar();
-		createGrid();
+        // Create ImageIcon for the master ship
+        ImageIcon originalIcon = new ImageIcon("master.png");
+        Image masterShip = originalIcon.getImage();
+        Image scaledMasterShip = masterShip.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
+        masterShipIcon = new ImageIcon(scaledMasterShip);
+    }
 
-		// Create ImageIcon for the master ship
-		ImageIcon originalIcon = new ImageIcon("master.png");
-		Image masterShip = originalIcon.getImage();
-		Image scaledMasterShip = masterShip.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
-		imageIcon = new ImageIcon(scaledMasterShip);
-	}
+    // ... (Existing methods: createStatusBar, createGrid) ...
 
+    private JButton createGridButton(int row, int col) {
+        JButton button = new JButton();
+        button.putClientProperty("row", row);
+        button.putClientProperty("col", col);
+        return button;
+    }
+
+    private void createGrid() {
+        int rows = 4;
+        int columns = 4;
+
+        JPanel grid = new JPanel();
+        grid.setBackground(Color.WHITE);
+        contentPane.add(grid, BorderLayout.CENTER);
+        grid.setLayout(new GridLayout(rows, columns));
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                grid.add(createGridButton(i, j));
+            }
+        }
+    }
+
+    public void setGridButtonListener(TriConsumer<Integer, Integer, JButton> listener) {
+        Component[] components = ((JPanel) contentPane.getComponent(1)).getComponents();
+        for (Component component : components) {
+            if (component instanceof JButton) {
+                JButton button = (JButton) component;
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int row = (int) button.getClientProperty("row");
+                        int col = (int) button.getClientProperty("col");
+                        listener.accept(row, col, button);
+                    }
+                });
+            }
+        }
+    }
+    
 	private void createStatusBar() {
 	    int preferredWidth = 300;
 	    JPanel statusbar = new JPanel();
@@ -99,53 +123,13 @@ public class SkyWarsMainGUI extends JFrame {
 	    // Add the status bar to the main content pane
 	    contentPane.add(statusbar, BorderLayout.EAST);
 	}
+	
 
+    public ImageIcon getMasterShipIcon() {
+        return masterShipIcon;
+    }
 
-	private JButton createGridButton(int row, int col) {
-	    JButton button = new JButton();
-	    button.addActionListener(new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            // If there was a previous button clicked, remove the master ship from that square
-	            if(prevCol != -1 && prevRow != -1) {
-	                Square prevSquare = gameGrid.getSquare(prevRow, prevCol);
-	                prevSquare.removeMasterShipAtSquare();
-	                prevButton.setIcon(null);
-	            }
-
-	            // Set the master ship at the new square
-	            Square square = gameGrid.getSquare(row, col);
-	            square.setMasterShipAtSquare();
-
-	            button.setIcon(imageIcon);
-
-	            // Update the previous row, column, and button
-	            prevRow = row;
-	            prevCol = col;
-	            prevButton = (JButton) e.getSource();
-	        }
-	    });
-
-	    return button;
-	}
-
-	private void createGrid() {
-		int rows = 4;
-		int columns = 4;
-
-		JPanel grid = new JPanel();
-		grid.setBackground(Color.WHITE);
-		contentPane.add(grid, BorderLayout.CENTER);
-		grid.setLayout(new GridLayout(rows, columns));
-
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < columns; j++) {
-				grid.add(createGridButton(i, j));
-			}
-		}
-	}
-
-	public void updateGameStatus(String status) {
-		gameStatus.setText("Status: " + status);
-	}
+    public void updateGameStatus(String status) {
+        gameStatus.setText("Status: " + status);
+    }
 }
