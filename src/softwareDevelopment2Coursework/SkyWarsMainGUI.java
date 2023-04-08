@@ -6,9 +6,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.function.BiConsumer;
 
-import grid.*;
+
 
 public class SkyWarsMainGUI extends JFrame {
     private JPanel contentPane;
@@ -16,10 +15,10 @@ public class SkyWarsMainGUI extends JFrame {
     private ImageIcon masterShipIcon;
 
     public SkyWarsMainGUI() {
-        initialize();
+        initialise();
     }
 
-    private void initialize() {
+    private void initialise() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1280, 720);
         contentPane = new JPanel();
@@ -36,9 +35,7 @@ public class SkyWarsMainGUI extends JFrame {
         Image masterShip = originalIcon.getImage();
         Image scaledMasterShip = masterShip.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
         masterShipIcon = new ImageIcon(scaledMasterShip);
-    }
-
-    // ... (Existing methods: createStatusBar, createGrid) ...
+    }// end initialise 
 
     private JButton createGridButton(int row, int col) {
         JButton button = new JButton();
@@ -124,7 +121,6 @@ public class SkyWarsMainGUI extends JFrame {
 	    contentPane.add(statusbar, BorderLayout.EAST);
 	}
 	
-
     public ImageIcon getMasterShipIcon() {
         return masterShipIcon;
     }
@@ -132,4 +128,20 @@ public class SkyWarsMainGUI extends JFrame {
     public void updateGameStatus(String status) {
         gameStatus.setText("Status: " + status);
     }
+    
+    public JButton getButtonAt(int row, int col) {
+        Component[] components = ((JPanel) contentPane.getComponent(1)).getComponents();
+        for (Component component : components) {
+            if (component instanceof JButton) {
+                JButton button = (JButton) component;
+                int buttonRow = (int) button.getClientProperty("row");
+                int buttonCol = (int) button.getClientProperty("col");
+                if (row == buttonRow && col == buttonCol) {
+                    return button;
+                }
+            }
+        }
+        return null;
+    }
+
 }

@@ -7,40 +7,41 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 public class SkyWarsController {
-    private SkyWarsModel model;
-    private SkyWarsMainGUI view;
-    private int prevRow = -1;
-    private int prevCol = -1;
-    private JButton prevButton = null;
+	private SkyWarsModel model;
+	private SkyWarsMainGUI view;
+	private JButton prevButton = null;
 
-    public SkyWarsController(SkyWarsModel model, SkyWarsMainGUI view) {
-        this.model = model;
-        this.view = view;
-        view.setGridButtonListener(this::handleGridButtonClick);
-    }
+	public SkyWarsController(SkyWarsModel model, SkyWarsMainGUI view) {
+		this.model = model;
+		this.view = view;
+		view.setGridButtonListener(this::handleGridButtonClick);
+	}
 
-    private void handleGridButtonClick(int row, int col, JButton button) {
-        Grid gameGrid = model.getGameGrid();
+	public void initializeMasterShip() {
+		model.allocateMasterShipRandomly();
+		int row = model.getPrevRow();
+		int col = model.getPrevCol();
+		prevButton = view.getButtonAt(row, col);
+		prevButton.setIcon(view.getMasterShipIcon());
+	}
 
-        // If there was a previous button clicked, remove the master ship from that square
-        if (prevCol != -1 && prevRow != -1) {
-            Square prevSquare = gameGrid.getSquare(prevRow, prevCol);
-            prevSquare.removeMasterShipAtSquare();
-            prevButton.setIcon(null);
-        }
+	private void handleGridButtonClick(int row, int col, JButton button) {
+		Grid gameGrid = model.getGameGrid();
 
-        // Set the master ship at the new square
-        Square square = gameGrid.getSquare(row, col);
-        square.setMasterShipAtSquare();
+		if (model.isValidMove(row, col)) {
+			model.moveMasterShip(row, col);
+			button.setIcon(view.getMasterShipIcon());
+			this.prevButton.setIcon(null);
+			this.prevButton = button;
+		}
 
-        button.setIcon(view.getMasterShipIcon());
+		else {
+			model.notValidMove();
+		}
 
-        // Update the previous row, column, and button
-        prevRow = row;
-        prevCol = col;
-        prevButton = button;
-    }
+	}
 
 }

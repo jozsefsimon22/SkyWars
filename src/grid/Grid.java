@@ -1,5 +1,4 @@
 package grid;
-import ships.Ship;
 
 public class Grid {
 	private final int length = 4;
@@ -16,7 +15,6 @@ public class Grid {
 	}
 	
 	
-	
 	public Square[][] getMap() {
 		return map;
 	}
@@ -27,5 +25,16 @@ public class Grid {
 
 	public void setSquare(int row, int column, Square square) {
 	    this.map[row][column] = square;
+	}
+
+	public int getLength() {
+		return length;
+	}
+	
+	public int getWidth() {
+		return width;
 	}	
+	
+	
+	
 }
