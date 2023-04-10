@@ -32,15 +32,15 @@ public class SkyWarsMainGUI extends JFrame {
         createGrid();
 
         // Create ImageIcon for the master ship
-        ImageIcon originalIcon = new ImageIcon("master.png");
-        Image masterShip = originalIcon.getImage();
-        Image scaledMasterShip = masterShip.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
-        masterShipIcon = new ImageIcon(scaledMasterShip);
-        
-        ImageIcon originalIconTwo = new ImageIcon("ship_one.png");
-        Image battleStar = originalIconTwo.getImage();
-        Image scaledBattleStar = battleStar.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
-        battleStarIcon = new ImageIcon(scaledBattleStar);
+//        ImageIcon originalIcon = new ImageIcon("master.png");
+//        Image masterShip = originalIcon.getImage();
+//        Image scaledMasterShip = masterShip.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
+//        masterShipIcon = new ImageIcon(scaledMasterShip);
+//        
+//        ImageIcon originalIconTwo = new ImageIcon("ship_one.png");
+//        Image battleStar = originalIconTwo.getImage();
+//        Image scaledBattleStar = battleStar.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
+//        battleStarIcon = new ImageIcon(scaledBattleStar);
     }// end initialise 
 
     private JButton createGridButton(int row, int col) {
