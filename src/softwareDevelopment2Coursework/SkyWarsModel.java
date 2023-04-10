@@ -26,6 +26,10 @@ public class SkyWarsModel {
 	public Grid getGameGrid() {
 		return gameGrid;
 	}
+	
+	public void setGameGrid(Grid gameGrid) {
+		this.gameGrid = gameGrid;
+	}
 
 	public void allocateMasterShipRandomly() {
 		int row = random.nextInt(gameGrid.getCol());
@@ -67,13 +71,9 @@ public class SkyWarsModel {
 		return prevCol;
 	}
 
-	public void newGame() {
+	public void resetGame() {
 		Grid sky = new Grid();
-		SkyWarsModel model = new SkyWarsModel(sky);
-		SkyWarsMainGUI view = new SkyWarsMainGUI();
-		SkyWarsController controller = new SkyWarsController(model, view);
-		controller.initializeMasterShip();
-		view.setVisible(true);
+		setGameGrid(sky);
 		score = 0;
 	}
 
@@ -89,28 +89,44 @@ public class SkyWarsModel {
 // Checks for a conflict at a specified square and removes all enemy ships at that square if the number of ships is less than the value defined for the mode,
 // or ends the game if the number of enemy ships is greater than or equal to the corresponding
 // defensive/offensive value in the Mode enum.
-	public void confilct(int row, int col, Mode mode) {
-		grid.Square tempSquare = gameGrid.getSquare(row, col);
-		if (tempSquare.getEnemyShipsAtSquare().size() > 0) {
-			if (mode == Mode.DEFENSIVE) {
-				if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.DEFENSIVE.getValue()) {
-					JOptionPane.showMessageDialog(null, "You lost");
-				} else {
-					tempSquare.removeAllShip();
-					score++;
-					
-				}
-
-			} else if (mode == Mode.OFFENSIVE) {
-				if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.OFFENSIVE.getValue()) {
-					JOptionPane.showMessageDialog(null, "You lost");
-				} else {
-					tempSquare.removeAllShip();
-					score++;
-				}
-			}
-		}
+	public boolean checkConflict(int row, int col, Mode mode) {
+	    boolean isGameOver = false;
+	    grid.Square tempSquare = gameGrid.getSquare(row, col);
+	    if (tempSquare.getEnemyShipsAtSquare().size() > 0) {
+	        if (mode == Mode.DEFENSIVE) {
+	            if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.DEFENSIVE.getValue()) {
+	                isGameOver = true;
+	            } else {
+	                tempSquare.removeAllShip();
+	                score++;
+	            }
+	        } else if (mode == Mode.OFFENSIVE) {
+	            if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.OFFENSIVE.getValue()) {
+	                isGameOver = true;
+	            } else {
+	                tempSquare.removeAllShip();
+	                score++;
+	            }
+	        }
+	    }
+	    return isGameOver;
 	}
+
+	
+	public int gameOver() {
+	    String output;
+
+	    output = "Game Over\n";
+	    output += "Score: " + score;
+
+	    Object[] options = {"Return to Main Menu", "Exit"};
+	    int choice = JOptionPane.showOptionDialog(null, output, "Game Over",
+	            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+	            null, options, options[0]);
+
+	    return choice;
+	}
+
 
 	// Move enemy ships to a new location
 	public void enemyShipMove() {
@@ -162,6 +178,14 @@ public class SkyWarsModel {
 
 	public int getScore() {
 		return score;
+	}
+	
+	public int noOfEnemyShipsAtSquare(int row, int col) {
+		int output;
+		
+		output = getGameGrid().getSquare(row, col).getEnemyShipsAtSquare().size();
+		
+		return output;
 	}
 
 }// end class

@@ -163,7 +163,7 @@ public class SkyWarsMainGUI extends JFrame {
         	    	public void actionPerformed(ActionEvent e) {
         	    		if(controller.confirmRestart() == 0) {        	    			
         	    			dispose();
-        	    			controller.newGame();
+        	    			controller.resetGame();
         	    		}
         	    	}
         	    });
@@ -171,7 +171,7 @@ public class SkyWarsMainGUI extends JFrame {
         	    	public void actionPerformed(ActionEvent e) {
         	    		if(controller.confirmExit() == 0) {
         	    			dispose();
-        	    			SkyWars.menu.setVisible(true);        	    			
+        	    			controller.mainMenu();        	    			
         	    		};
         	    	}
         	    });

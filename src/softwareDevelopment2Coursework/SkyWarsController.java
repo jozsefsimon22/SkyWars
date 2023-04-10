@@ -25,6 +25,12 @@ public class SkyWarsController {
 		view.setGridButtonListener(this::handleGridButtonClick);
 		view.setController(this);
 	}
+	
+	public void mainMenu() {
+		MainMenu menu = new MainMenu();
+        menu.setVisible(true);
+        menu.setController(this);
+	}
 
 	public void initializeMasterShip() {
 		model.allocateMasterShipRandomly();
@@ -34,39 +40,62 @@ public class SkyWarsController {
 		prevButton.setIcon(masterShip.getIcon());
 	}
 
-	public void newGame() {
-		model.newGame();
+	public void resetGame() {
+		model.resetGame();
+		view.setVisible(true);
+		displayEnemyShips();
+		initializeMasterShip();
+		view.setMoves(0);
+		view.setScore(0);
+		view.setEnemyShips(0);
+	    view.setEnemyShipCountLabel();
+	    view.setScoreLabel();
+	    view.setMoveCountLabel();
 	}
 
 	private void handleGridButtonClick(int row, int col, JButton button) {
-		Grid gameGrid = model.getGameGrid();
+	    Grid gameGrid = model.getGameGrid();
 
-		if (model.isValidMove(row, col)) {
-			this.prevButton.setIcon(null);
-			this.prevButton = button;
-			model.enemyShipMove();
-			model.moveMasterShip(row, col);
-			model.confilct(row, col, view.getMode());
-			model.newEnemyShip();
-			this.displayEnemyShips();
-			view.setEnemyShipCountLabel();
-			view.setEnemyShips(model.getEnemyShipsInSky());
-			view.setMoves(view.getMoves() + 1);
-			view.setMoveCountLabel();
-			view.setScore(model.getScore());
-			view.setScoreLabel();
-			button.setIcon(masterShip.getIcon());
-		}
-		else {
-			model.notValidMove();
-		}
-
+	    if (model.isValidMove(row, col)) {
+	        this.prevButton.setIcon(null);
+	        this.prevButton = button;
+	        model.enemyShipMove();
+	        model.moveMasterShip(row, col);
+	        boolean isGameOver = model.checkConflict(row, col, view.getMode());
+	        if (isGameOver) {
+	            int choice = model.gameOver();
+	            if (choice == 0) {
+	                returnToMainMenu();
+	            } else if (choice == 1) {
+	                System.exit(0);
+	            }
+	            return;
+	        }
+	        model.newEnemyShip();
+	        this.displayEnemyShips();
+	        view.setEnemyShipCountLabel();
+	        view.setEnemyShips(model.getEnemyShipsInSky());
+	        view.setMoves(view.getMoves() + 1);
+	        view.setMoveCountLabel();
+	        view.setScore(model.getScore());
+	        view.setScoreLabel();
+	        button.setIcon(masterShip.getIcon());
+	    } else {
+	        model.notValidMove();
+	    }
 	}
+
+	
+	public void returnToMainMenu() {
+	    view.dispose();
+	    mainMenu();
+	}
+
 	
 	public int numberOfShips(int row, int col) {
 		int numberOfShips;
 		
-		numberOfShips = model.getGameGrid().getSquare(row, col).getEnemyShipsAtSquare().size();
+		numberOfShips = model.noOfEnemyShipsAtSquare(row, col);
 		
 		return numberOfShips;
 	}

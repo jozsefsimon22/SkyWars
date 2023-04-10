@@ -50,7 +50,7 @@ public class MainMenu extends JFrame {
 		JButton btnNewGame = new JButton("New Game");
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.newGame();
+				controller.resetGame();
 				dispose();
 			}
 		});
