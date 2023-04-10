@@ -1,14 +1,14 @@
 package grid;
 
 public class Grid {
-	private final int length = 4;
-	private final int width = 4;
+	private final int defaultRow = 4;
+	private final int defaultCol = 4;
 	private Square[][] map;
 	
 	public Grid() {
-		this.map = new Square[length][width];
-		for(int row = 0; row < width; row++) {
-			for(int column = 0; column < length; column++) {
+		this.map = new Square[defaultRow][defaultCol];
+		for(int row = 0; row < defaultCol; row++) {
+			for(int column = 0; column < defaultRow; column++) {
 				this.map[row][column] = new Square();
 			}
 		}
@@ -27,12 +27,12 @@ public class Grid {
 	    this.map[row][column] = square;
 	}
 
-	public int getLength() {
-		return length;
+	public int getRow() {
+		return defaultRow;
 	}
 	
-	public int getWidth() {
-		return width;
+	public int getCol() {
+		return defaultCol;
 	}	
 	
 	

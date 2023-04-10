@@ -30,7 +30,6 @@ public class SkyWarsController {
 		int row = model.getPrevRow();
 		int col = model.getPrevCol();
 		prevButton = view.getButtonAt(row, col);
-//		prevButton.setIcon(view.getMasterShipIcon());
 		prevButton.setIcon(masterShip.getIcon());
 	}
 
@@ -47,6 +46,7 @@ public class SkyWarsController {
 			button.setIcon(masterShip.getIcon());
 			this.prevButton.setIcon(null);
 			this.prevButton = button;
+			model.enemyShipMove();
 			model.newEnemyShip();
 			this.displayEnemyShips();
 		}
@@ -56,12 +56,13 @@ public class SkyWarsController {
 		}
 
 	}
+	
 
 	// Sets the image of the GUI square to the image of the first ship in the
 	// ArrayList
 	public void displayEnemyShips() {
-		for (int row = 0; row < model.getGameGrid().getWidth(); row++) {
-			for (int col = 0; col < model.getGameGrid().getLength(); col++) {
+		for (int row = 0; row < model.getGameGrid().getCol(); row++) {
+			for (int col = 0; col < model.getGameGrid().getRow(); col++) {
 				ArrayList<Ship> enemyShips = model.getGameGrid().getSquare(row, col).getEnemyShipsAtSquare();
 				if (!enemyShips.isEmpty()) {
 					Ship tempShip = enemyShips.get(0);
