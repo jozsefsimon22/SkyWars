@@ -8,7 +8,9 @@ import java.lang.ModuleLayer.Controller;
 
 import grid.*;
 
+
 public class SkyWars {
+	public static MainMenu menu;
 
     public static void main(String[] args) {
     	Grid sky = new Grid();
@@ -19,7 +21,7 @@ public class SkyWars {
     	        EventQueue.invokeLater(new Runnable() {
     	            public void run() {
     	                try {
-    	                    MainMenu menu = new MainMenu();
+    	                    menu = new MainMenu();
     	                    menu.setVisible(true);
     	                    menu.setController(controller);
     	                } catch (Exception e) {

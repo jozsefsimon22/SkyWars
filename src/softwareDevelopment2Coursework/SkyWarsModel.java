@@ -17,6 +17,7 @@ public class SkyWarsModel {
 	private int prevCol = -1;
 	private ShipGenerator enemyShip = new ShipGenerator();
 	private Random random = new Random();
+	private int score;
 
 	public SkyWarsModel(Grid gameGrid) {
 		this.gameGrid = gameGrid;
@@ -73,6 +74,7 @@ public class SkyWarsModel {
 		SkyWarsController controller = new SkyWarsController(model, view);
 		controller.initializeMasterShip();
 		view.setVisible(true);
+		score = 0;
 	}
 
 	// Generate a new enemy ship with a 1 in a 3 chance
@@ -84,30 +86,82 @@ public class SkyWarsModel {
 		}
 	}
 
+// Checks for a conflict at a specified square and removes all enemy ships at that square if the number of ships is less than the value defined for the mode,
+// or ends the game if the number of enemy ships is greater than or equal to the corresponding
+// defensive/offensive value in the Mode enum.
+	public void confilct(int row, int col, Mode mode) {
+		grid.Square tempSquare = gameGrid.getSquare(row, col);
+		if (tempSquare.getEnemyShipsAtSquare().size() > 0) {
+			if (mode == Mode.DEFENSIVE) {
+				if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.DEFENSIVE.getValue()) {
+					JOptionPane.showMessageDialog(null, "You lost");
+				} else {
+					tempSquare.removeAllShip();
+					score++;
+					
+				}
+
+			} else if (mode == Mode.OFFENSIVE) {
+				if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.OFFENSIVE.getValue()) {
+					JOptionPane.showMessageDialog(null, "You lost");
+				} else {
+					tempSquare.removeAllShip();
+					score++;
+				}
+			}
+		}
+	}
+
 	// Move enemy ships to a new location
 	public void enemyShipMove() {
-	    Grid newGrid = new Grid();
-	    int tempRow;
-	    int tempCol;
-	    for (int row = 0; row < gameGrid.getRow(); row++) {
-	        for (int col = 0; col < gameGrid.getCol(); col++) {
-	            ArrayList<Ship> enemyShips = getGameGrid().getSquare(row, col).getEnemyShipsAtSquare();
-	            if (!enemyShips.isEmpty()) {
-	                // Define the bounds for the random movement of the ships
-	                int minRow = Math.max(row - 1, 0); // Ensure the minimum row stays within the grid
-	                int maxRow = Math.min(row + 1, gameGrid.getRow() - 1); // Ensure the maximum row stays within the grid
-	                int minCol = Math.max(col - 1, 0); // Ensure the minimum column stays within the grid
-	                int maxCol = Math.min(col + 1, gameGrid.getCol() - 1); // Ensure the maximum column stays within the grid
+		Grid newGrid = new Grid();
+		int tempRow;
+		int tempCol;
+		for (int row = 0; row < gameGrid.getRow(); row++) {
+			for (int col = 0; col < gameGrid.getCol(); col++) {
+				ArrayList<Ship> enemyShips = getGameGrid().getSquare(row, col).getEnemyShipsAtSquare();
+				if (!enemyShips.isEmpty()) {
+					// Define the bounds for the random movement of the ships
+					int minRow = Math.max(row - 1, 0); // Ensure the minimum row stays within the grid
+					int maxRow = Math.min(row + 1, gameGrid.getRow() - 1); // Ensure the maximum row stays within the
+																			// grid
+					int minCol = Math.max(col - 1, 0); // Ensure the minimum column stays within the grid
+					int maxCol = Math.min(col + 1, gameGrid.getCol() - 1); // Ensure the maximum column stays within the
+																			// grid
 
-	                for (Ship ship : enemyShips) {
-	                    tempRow = random.nextInt(maxRow - minRow + 1) + minRow; // Randomly generate a row between minRow and maxRow
-	                    tempCol = random.nextInt(maxCol - minCol + 1) + minCol; // Randomly generate a column between minCol and maxCol
-	                    newGrid.getSquare(tempRow, tempCol).addEnemyShip(ship);
-	                }
-	            }
-	        }
-	    }
-	    this.gameGrid = newGrid;
+					for (Ship ship : enemyShips) {
+						tempRow = random.nextInt(minRow, maxRow + 1); // Randomly generate a row between minRow and
+																		// maxRow
+						tempCol = random.nextInt(minCol, maxCol + 1); // Randomly generate a column between minCol and
+																		// maxCol
+						newGrid.getSquare(tempRow, tempCol).addEnemyShip(ship);
+					}
+				}
+			}
+		}
+		this.gameGrid = newGrid;
+	}
+
+	public Mode modeSwitcher(Mode currentMode) {
+		if (currentMode == Mode.OFFENSIVE) {
+			return Mode.DEFENSIVE;
+		} else {
+			return Mode.OFFENSIVE;
+		}
+	}
+
+	public int getEnemyShipsInSky() {
+		int enemyShips = 0;
+		for (int row = 0; row < gameGrid.getRow(); row++) {
+			for (int col = 0; col < gameGrid.getCol(); col++) {
+				enemyShips += gameGrid.getSquare(row, col).getEnemyShipsAtSquare().size();
+			}
+		}
+		return enemyShips;
+	}
+
+	public int getScore() {
+		return score;
 	}
 
 }// end class

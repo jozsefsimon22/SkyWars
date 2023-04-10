@@ -6,16 +6,30 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.lang.ModuleLayer.Controller;
 
 
 
 public class SkyWarsMainGUI extends JFrame {
     private JPanel contentPane;
     private JLabel gameStatus;
-    private ImageIcon masterShipIcon;
-    private ImageIcon battleStarIcon;
+    private SkyWarsController controller;
+    private Mode mode;
+    private int score;
+    private int moves;
+    private int enemyShips;
+    JLabel moveCount = new JLabel();
+    JLabel scoreLabel = new JLabel();
+    JLabel enemyShipCount = new JLabel();
+    
+    public void setController(SkyWarsController controller) {
+		this.controller = controller;
+	}
 
-    public SkyWarsMainGUI() {
+	public SkyWarsMainGUI() {
         initialise();
     }
 
@@ -27,9 +41,14 @@ public class SkyWarsMainGUI extends JFrame {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout());
+        mode = Mode.DEFENSIVE;
+        setScore(0);
+        setMoves(0);
+        setEnemyShips(0);
 
         createStatusBar();
         createGrid();
+        createMenu();
     }// end initialise 
 
     private JButton createGridButton(int row, int col) {
@@ -66,6 +85,15 @@ public class SkyWarsMainGUI extends JFrame {
                         int row = (int) button.getClientProperty("row");
                         int col = (int) button.getClientProperty("col");
                         listener.accept(row, col, button);
+                        
+                    }
+                });
+                button.addMouseMotionListener((MouseMotionListener) new MouseAdapter() {
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        int row = (int) button.getClientProperty("row");
+                        int col = (int) button.getClientProperty("col");
+                        button.setToolTipText("There are " + controller.numberOfShips(row, col) + " at this square.");
                     }
                 });
             }
@@ -88,56 +116,125 @@ public class SkyWarsMainGUI extends JFrame {
 	    // Add a vertical strut for spacing between components
 	    statusbar.add(Box.createVerticalStrut(20));
 
-	    JLabel masterSpaceShipMode = new JLabel("Master Space Ship Mode: VARIABLE");
+	    JLabel masterSpaceShipMode = new JLabel("Master Space Ship Mode: " + mode);
 	    statusbar.add(masterSpaceShipMode);
+	    statusbar.add(Box.createVerticalStrut(5));
+	    JToggleButton tglbtnMode = new JToggleButton("Switch Mode");
+	    tglbtnMode.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		controller.modeSwitcher();
+	    		masterSpaceShipMode.setText("Master Space Ship Mode: " + mode);
+	    	}
+	    });
+	    statusbar.add(tglbtnMode);
 
 	    statusbar.add(Box.createVerticalStrut(20));
 
-	    JLabel enemyShipCount = new JLabel("Enemy Ships: VARIABLE");
+	    setEnemyShipCountLabel();
 	    statusbar.add(enemyShipCount);
 
 	    statusbar.add(Box.createVerticalStrut(20));
 
-	    JLabel score = new JLabel("Score: VARIABLE");
-	    statusbar.add(score);
+	    setScoreLabel();
+	    statusbar.add(scoreLabel);
 
 	    statusbar.add(Box.createVerticalStrut(20));
 
-	    JLabel moveCount = new JLabel("Moves: VARIABLE");
+	    setMoveCountLabel();
 	    statusbar.add(moveCount);
-
+	 
 	    // Add a glue component to push the reset button to the bottom of the status bar
 	    statusbar.add(Box.createVerticalGlue());
-
-	    JButton resetButton = new JButton("Restart");
-	    resetButton.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		
-	    	}
-	    });
-	    statusbar.add(resetButton);
 
 	    // Add the status bar to the main content pane
 	    contentPane.add(statusbar, BorderLayout.EAST);
 	}
+	
+	public void createMenu() {
+        JPanel panel = new JPanel();
+        contentPane.add(panel, BorderLayout.SOUTH);
+        
+        JButton mainMenuButton = new JButton("Main Menu");
+        panel.add(mainMenuButton);
+        
+        	    JButton restartButton = new JButton("Restart");
+        	    panel.add(restartButton);
+        	    restartButton.addActionListener(new ActionListener() {
+        	    	public void actionPerformed(ActionEvent e) {
+        	    		if(controller.confirmRestart() == 0) {        	    			
+        	    			dispose();
+        	    			controller.newGame();
+        	    		}
+        	    	}
+        	    });
+        	    mainMenuButton.addActionListener(new ActionListener() {
+        	    	public void actionPerformed(ActionEvent e) {
+        	    		if(controller.confirmExit() == 0) {
+        	    			dispose();
+        	    			SkyWars.menu.setVisible(true);        	    			
+        	    		};
+        	    	}
+        	    });
+	}
 
-    public void updateGameStatus(String status) {
-        gameStatus.setText("Status: " + status);
-    }
+	public JButton getButtonAt(int row, int col) {
+		Component[] components = ((JPanel) contentPane.getComponent(1)).getComponents();
+		for (Component component : components) {
+			if (component instanceof JButton) {
+				JButton button = (JButton) component;
+				int buttonRow = (int) button.getClientProperty("row");
+				int buttonCol = (int) button.getClientProperty("col");
+				if (row == buttonRow && col == buttonCol) {
+					return button;
+				}
+			}
+		}
+		return null;
+	}
+	
+    public Mode getMode() {
+		return mode;
+	}
+
+	public void setMode(Mode mode) {
+		this.mode = mode;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
+	public void setScoreLabel() {
+		scoreLabel.setText("Score: " + score);
+	}
+
+	public int getMoves() {
+		return moves;
+	}
+
+	public void setMoves(int moves) {
+		this.moves = moves;
+	}
+	
+	public void setMoveCountLabel() {
+		moveCount.setText("Moves: " + moves);
+	}
+
+	public int getEnemyShips() {
+		return enemyShips;
+	}
+
+	public void setEnemyShips(int enemyShips) {
+		this.enemyShips = enemyShips;
+	}
+
+	public void setEnemyShipCountLabel() {
+		enemyShipCount.setText("Enemy Ships: " + enemyShips);
+	}
     
-    public JButton getButtonAt(int row, int col) {
-        Component[] components = ((JPanel) contentPane.getComponent(1)).getComponents();
-        for (Component component : components) {
-            if (component instanceof JButton) {
-                JButton button = (JButton) component;
-                int buttonRow = (int) button.getClientProperty("row");
-                int buttonCol = (int) button.getClientProperty("col");
-                if (row == buttonRow && col == buttonCol) {
-                    return button;
-                }
-            }
-        }
-        return null;
-    }
 
 }

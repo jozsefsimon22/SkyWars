@@ -23,6 +23,7 @@ public class SkyWarsController {
 		this.model = model;
 		this.view = view;
 		view.setGridButtonListener(this::handleGridButtonClick);
+		view.setController(this);
 	}
 
 	public void initializeMasterShip() {
@@ -34,27 +35,40 @@ public class SkyWarsController {
 	}
 
 	public void newGame() {
-		initializeMasterShip();
-		view.setVisible(true);
+		model.newGame();
 	}
 
 	private void handleGridButtonClick(int row, int col, JButton button) {
 		Grid gameGrid = model.getGameGrid();
 
 		if (model.isValidMove(row, col)) {
-			model.moveMasterShip(row, col);
-			button.setIcon(masterShip.getIcon());
 			this.prevButton.setIcon(null);
 			this.prevButton = button;
 			model.enemyShipMove();
+			model.moveMasterShip(row, col);
+			model.confilct(row, col, view.getMode());
 			model.newEnemyShip();
 			this.displayEnemyShips();
+			view.setEnemyShipCountLabel();
+			view.setEnemyShips(model.getEnemyShipsInSky());
+			view.setMoves(view.getMoves() + 1);
+			view.setMoveCountLabel();
+			view.setScore(model.getScore());
+			view.setScoreLabel();
+			button.setIcon(masterShip.getIcon());
 		}
-
 		else {
 			model.notValidMove();
 		}
 
+	}
+	
+	public int numberOfShips(int row, int col) {
+		int numberOfShips;
+		
+		numberOfShips = model.getGameGrid().getSquare(row, col).getEnemyShipsAtSquare().size();
+		
+		return numberOfShips;
 	}
 	
 
@@ -79,8 +93,30 @@ public class SkyWarsController {
 					}
 
 				}
+				else {
+					JButton tempButton = view.getButtonAt(row, col);
+					tempButton.setIcon(null);
+				}
 			}
 		}
 	}
+	
+	public int confirmExit() {
+		int output;
+		output = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
+		return output;
+	}
+	
+	public int confirmRestart() {
+		int output;
+		output = JOptionPane.showConfirmDialog(null, "Are you sure you want to restart the game?", "Restart", JOptionPane.YES_NO_OPTION);
+		return output;
+	}
 
+	
+	public void modeSwitcher() {
+	    Mode currentMode = view.getMode();
+	    Mode newMode = model.modeSwitcher(currentMode);
+	    view.setMode(newMode);
+	}
 }
