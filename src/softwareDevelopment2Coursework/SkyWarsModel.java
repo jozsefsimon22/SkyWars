@@ -6,6 +6,8 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 import grid.Grid;
+import ships.Ship;
+import ships.ShipGenerator;
 import ships.Square;
 
 
@@ -13,6 +15,7 @@ public class SkyWarsModel {
 	private Grid gameGrid;
 	private int prevRow = -1;
 	private int prevCol = -1;
+	private ShipGenerator enemyShip = new ShipGenerator();
 	
 	
     public SkyWarsModel(Grid gameGrid) {
@@ -62,6 +65,27 @@ public class SkyWarsModel {
 	public int getPrevCol() {
 		return prevCol;
 	}
-
+	
+	public void newGame() {
+    	Grid sky = new Grid();
+        SkyWarsModel model = new SkyWarsModel(sky);
+        SkyWarsMainGUI view = new SkyWarsMainGUI();
+        SkyWarsController controller = new SkyWarsController(model, view);
+        controller.initializeMasterShip();
+        view.setVisible(true);  
+	}
+	
+	// Generate a new enemy ship with a 1 in a 3 chance 
+	public void newEnemyShip() {
+		Random random = new Random();
+		int newShip = random.nextInt(3);
+		
+		if(newShip == 0){
+			this.gameGrid.getSquare(0, 0).addEnemyShip(enemyShip.newShip());	
+		}
+		
+	}
+	
+	
     
 }// end class

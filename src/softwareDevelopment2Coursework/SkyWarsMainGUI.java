@@ -13,6 +13,7 @@ public class SkyWarsMainGUI extends JFrame {
     private JPanel contentPane;
     private JLabel gameStatus;
     private ImageIcon masterShipIcon;
+    private ImageIcon battleStarIcon;
 
     public SkyWarsMainGUI() {
         initialise();
@@ -35,6 +36,11 @@ public class SkyWarsMainGUI extends JFrame {
         Image masterShip = originalIcon.getImage();
         Image scaledMasterShip = masterShip.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
         masterShipIcon = new ImageIcon(scaledMasterShip);
+        
+        ImageIcon originalIconTwo = new ImageIcon("ship_one.png");
+        Image battleStar = originalIconTwo.getImage();
+        Image scaledBattleStar = battleStar.getScaledInstance(100, 100, masterShip.SCALE_SMOOTH);
+        battleStarIcon = new ImageIcon(scaledBattleStar);
     }// end initialise 
 
     private JButton createGridButton(int row, int col) {
@@ -114,7 +120,12 @@ public class SkyWarsMainGUI extends JFrame {
 	    // Add a glue component to push the reset button to the bottom of the status bar
 	    statusbar.add(Box.createVerticalGlue());
 
-	    JButton resetButton = new JButton("Reset");
+	    JButton resetButton = new JButton("Restart");
+	    resetButton.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		
+	    	}
+	    });
 	    statusbar.add(resetButton);
 
 	    // Add the status bar to the main content pane
@@ -123,6 +134,10 @@ public class SkyWarsMainGUI extends JFrame {
 	
     public ImageIcon getMasterShipIcon() {
         return masterShipIcon;
+    }
+    
+    public ImageIcon getbattleStarIcon() {
+        return battleStarIcon;
     }
 
     public void updateGameStatus(String status) {
