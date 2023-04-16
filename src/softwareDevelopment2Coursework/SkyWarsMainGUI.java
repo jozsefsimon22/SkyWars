@@ -6,7 +6,6 @@ import javax.swing.border.EmptyBorder;
 
 import grid.Grid;
 import ships.Ship;
-import ships.Square;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,14 +13,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.lang.ModuleLayer.Controller;
 import java.util.ArrayList;
 
 
 
 public class SkyWarsMainGUI extends JFrame {
-    private JPanel contentPane;
-    private JLabel gameStatus;
+    private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
     private SkyWarsController controller;
     private Mode mode;
     private int score;
@@ -116,8 +114,6 @@ public class SkyWarsMainGUI extends JFrame {
 	    // Add a border around the status bar for better separation
 	    statusbar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-	    gameStatus = new JLabel("Status: VARIABLE");
-	    statusbar.add(gameStatus);
 
 	    // Add a vertical strut for spacing between components
 	    statusbar.add(Box.createVerticalStrut(20));

@@ -1,7 +1,6 @@
 // SkyWarsController.java
 package softwareDevelopment2Coursework;
 
-import grid.Grid;
 import ships.MasterShip;
 import ships.Ship;
 
@@ -64,8 +63,6 @@ public class SkyWarsController {
 
 
 	private void handleGridButtonClick(int row, int col, JButton button) {
-	    Grid gameGrid = model.getGameGrid();
-
 	    if (model.isValidMove(row, col)) {
 	        this.prevButton.setIcon(null);
 	        this.prevButton = button;

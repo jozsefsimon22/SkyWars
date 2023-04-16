@@ -6,7 +6,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 public class ImageBackgroundPanel extends JPanel {
-    private Image backgroundImage;
+    private static final long serialVersionUID = 1L;
+	private Image backgroundImage;
 
     public ImageBackgroundPanel(String imagePath) {
         this.backgroundImage = new ImageIcon(imagePath).getImage();
