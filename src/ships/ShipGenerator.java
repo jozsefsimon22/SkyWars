@@ -1,9 +1,11 @@
 package ships;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class ShipGenerator {
+public class ShipGenerator implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	Random randomGenerator = new Random();
 	int random;
 	

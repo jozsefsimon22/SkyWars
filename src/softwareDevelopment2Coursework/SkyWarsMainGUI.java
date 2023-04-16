@@ -3,6 +3,11 @@ package softwareDevelopment2Coursework;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import grid.Grid;
+import ships.Ship;
+import ships.Square;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.lang.ModuleLayer.Controller;
+import java.util.ArrayList;
 
 
 
@@ -154,27 +160,42 @@ public class SkyWarsMainGUI extends JFrame {
         JPanel panel = new JPanel();
         contentPane.add(panel, BorderLayout.SOUTH);
         
+        //Main menu button
         JButton mainMenuButton = new JButton("Main Menu");
+	    mainMenuButton.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		if(controller.confirmExit() == 0) {
+	    			dispose();
+	    			controller.mainMenu();        	    			
+	    		};
+	    	}
+	    });
         panel.add(mainMenuButton);
         
-        	    JButton restartButton = new JButton("Restart");
-        	    panel.add(restartButton);
-        	    restartButton.addActionListener(new ActionListener() {
-        	    	public void actionPerformed(ActionEvent e) {
-        	    		if(controller.confirmRestart() == 0) {        	    			
-        	    			dispose();
-        	    			controller.resetGame();
-        	    		}
-        	    	}
-        	    });
-        	    mainMenuButton.addActionListener(new ActionListener() {
-        	    	public void actionPerformed(ActionEvent e) {
-        	    		if(controller.confirmExit() == 0) {
-        	    			dispose();
-        	    			controller.mainMenu();        	    			
-        	    		};
-        	    	}
-        	    });
+        //Save game button
+        JButton saveGameButton = new JButton("Save Game");
+        saveGameButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String name = JOptionPane.showInputDialog("Please enter a name: ");
+        		controller.saveGame(name);
+    			dispose();
+    			controller.mainMenu(); 
+        	}
+        });
+        panel.add(saveGameButton);
+        
+        //Restart button
+	    JButton restartButton = new JButton("Restart");
+	    restartButton.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		if(controller.confirmRestart() == 0) {        	    			
+	    			dispose();
+	    			controller.resetGame();
+	    		}
+	    	}
+	    });
+	    panel.add(restartButton);
+
 	}
 
 	public JButton getButtonAt(int row, int col) {
@@ -191,6 +212,36 @@ public class SkyWarsMainGUI extends JFrame {
 		}
 		return null;
 	}
+	
+	public void updateGameGrid(Grid grid) {
+	    int rows = grid.getRow();
+	    int columns = grid.getCol();
+
+	    for (int row = 0; row < rows; row++) {
+	        for (int col = 0; col < columns; col++) {
+	            grid.Square square = grid.getSquare(row, col);
+	            JButton button = getButtonAt(row, col);
+
+	            // Clear the current button state
+	            button.setIcon(null);
+	            button.setBackground(Color.WHITE);
+
+	            // If there is a master ship in the square, set the button's icon to the master ship's icon
+	            if (square.isMasterShipAtSquare()) {
+	                Ship masterShip = controller.initializeMasterShip();
+	                button.setIcon(masterShip.getIcon());
+	            } else {
+	                // Check for the presence of enemy ships in the square
+	                ArrayList<Ship> enemyShips = square.getEnemyShipsAtSquare();
+	                if (!enemyShips.isEmpty()) {
+	                    // In this example, we set the button's icon to the first enemy ship in the list
+	                    button.setIcon(enemyShips.get(0).getIcon());
+	                }
+	            }
+	        }
+	    }
+	}
+
 	
     public Mode getMode() {
 		return mode;

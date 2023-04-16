@@ -1,6 +1,12 @@
 // SkyWarsModel.java
 package softwareDevelopment2Coursework;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -9,9 +15,9 @@ import javax.swing.JOptionPane;
 import grid.Grid;
 import ships.Ship;
 import ships.ShipGenerator;
-import ships.Square;
 
-public class SkyWarsModel {
+public class SkyWarsModel implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private Grid gameGrid;
 	private int prevRow = -1;
 	private int prevCol = -1;
@@ -186,6 +192,26 @@ public class SkyWarsModel {
 		output = getGameGrid().getSquare(row, col).getEnemyShipsAtSquare().size();
 		
 		return output;
+	}
+	
+	// Save and load game functionalities 
+	public void saveGame(String fileName) {
+	    try (FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+	         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+	        objectOutputStream.writeObject(this);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	public static SkyWarsModel loadGame(String fileName) {
+	    try (FileInputStream fileInputStream = new FileInputStream(fileName);
+	         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+	        return (SkyWarsModel) objectInputStream.readObject();
+	    } catch (IOException | ClassNotFoundException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
 	}
 
 }// end class

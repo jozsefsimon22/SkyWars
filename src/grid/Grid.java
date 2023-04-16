@@ -1,6 +1,9 @@
 package grid;
 
-public class Grid {
+import java.io.Serializable;
+
+public class Grid implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private final int defaultRow = 4;
 	private final int defaultCol = 4;
 	private Square[][] map;

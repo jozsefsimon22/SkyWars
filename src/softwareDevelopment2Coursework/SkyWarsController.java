@@ -2,12 +2,11 @@
 package softwareDevelopment2Coursework;
 
 import grid.Grid;
-import grid.Square;
 import ships.MasterShip;
 import ships.Ship;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -32,13 +31,15 @@ public class SkyWarsController {
         menu.setController(this);
 	}
 
-	public void initializeMasterShip() {
-		model.allocateMasterShipRandomly();
-		int row = model.getPrevRow();
-		int col = model.getPrevCol();
-		prevButton = view.getButtonAt(row, col);
-		prevButton.setIcon(masterShip.getIcon());
+	public Ship initializeMasterShip() {
+	    model.allocateMasterShipRandomly();
+	    int row = model.getPrevRow();
+	    int col = model.getPrevCol();
+	    prevButton = view.getButtonAt(row, col);
+	    prevButton.setIcon(masterShip.getIcon());
+	    return masterShip;
 	}
+
 
 	public void resetGame() {
 		model.resetGame();
@@ -148,4 +149,21 @@ public class SkyWarsController {
 	    Mode newMode = model.modeSwitcher(currentMode);
 	    view.setMode(newMode);
 	}
+	
+	public void saveGame(String fileName) {
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+	    String date = dateFormat.format(new Date());
+	    String newFileName = fileName + "_" + date;
+	    model.saveGame(newFileName);
+	    JOptionPane.showMessageDialog(null, "Game Saved");
+	}
+
+    public void loadGame(String fileName) {
+        SkyWarsModel loadedModel = SkyWarsModel.loadGame(fileName);
+        if (loadedModel != null) {
+            model = loadedModel;
+            view.updateGameGrid(model.getGameGrid());
+        }
+    }
+	
 }

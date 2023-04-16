@@ -1,11 +1,13 @@
 package grid;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ships.Ship;
 
-public class Square {
+public class Square implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	ArrayList<Ship> enemyShipsAtSquare = new ArrayList<Ship>();
 	boolean masterShipAtSquare = false;
 	
