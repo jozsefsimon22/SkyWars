@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -22,9 +23,11 @@ import java.awt.BorderLayout;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 
 public class MainMenu extends JFrame {
+	private static final long serialVersionUID = 1L;
 	private SkyWarsController controller; 
 	private JPanel contentPane;
 
@@ -58,6 +61,29 @@ public class MainMenu extends JFrame {
 		panelCentre.add(btnNewGame, "1, 2, fill, fill");
 
 		JButton btnLoadGame = new JButton("Load Game");
+		btnLoadGame.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        JFileChooser openFile = new JFileChooser();
+
+		        // Set the default directory for JFileChooser to the application folder
+		        openFile.setCurrentDirectory(new File(System.getProperty("user.dir")));
+
+		        // The return value of showOpenDialog method indicates whether the user selected a file or not
+		        int returnValue = openFile.showOpenDialog(null);
+
+		        // If the user selected a file, get the file name and load the game
+		        if (returnValue == JFileChooser.APPROVE_OPTION) {
+		            // Get the file name from the JFileChooser
+		            String fileName = openFile.getSelectedFile().getAbsolutePath();
+
+		            // Use the file name to load the game through the controller
+		            controller.loadGame(fileName);
+		            dispose();
+		        }
+		    }
+		});
+
+
 		panelCentre.add(btnLoadGame, "1, 4, fill, fill");
 
 		JButton btnExit = new JButton("Exit");
@@ -81,7 +107,6 @@ public class MainMenu extends JFrame {
 		panelEast.setOpaque(false);
 
 		JPanel panelNorth = new JPanel();
-		FlowLayout flowLayout_1 = (FlowLayout) panelNorth.getLayout();
 		contentPane.add(panelNorth, BorderLayout.NORTH);
 		panelNorth.setOpaque(false);
 

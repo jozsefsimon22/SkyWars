@@ -39,6 +39,14 @@ public class SkyWarsController {
 	    prevButton.setIcon(masterShip.getIcon());
 	    return masterShip;
 	}
+	
+	public Ship loadMasterShip() {
+	    int row = model.getPrevRow();
+	    int col = model.getPrevCol();
+	    prevButton = view.getButtonAt(row, col);
+	    prevButton.setIcon(masterShip.getIcon());
+	    return masterShip;
+	}
 
 
 	public void resetGame() {
@@ -53,6 +61,7 @@ public class SkyWarsController {
 	    view.setScoreLabel();
 	    view.setMoveCountLabel();
 	}
+
 
 	private void handleGridButtonClick(int row, int col, JButton button) {
 	    Grid gameGrid = model.getGameGrid();
@@ -161,8 +170,10 @@ public class SkyWarsController {
     public void loadGame(String fileName) {
         SkyWarsModel loadedModel = SkyWarsModel.loadGame(fileName);
         if (loadedModel != null) {
+        	this.prevButton = null;
             model = loadedModel;
             view.updateGameGrid(model.getGameGrid());
+            view.setVisible(true);
         }
     }
 	

@@ -228,7 +228,7 @@ public class SkyWarsMainGUI extends JFrame {
 
 	            // If there is a master ship in the square, set the button's icon to the master ship's icon
 	            if (square.isMasterShipAtSquare()) {
-	                Ship masterShip = controller.initializeMasterShip();
+	                Ship masterShip = controller.loadMasterShip();
 	                button.setIcon(masterShip.getIcon());
 	            } else {
 	                // Check for the presence of enemy ships in the square
