@@ -1,6 +1,7 @@
 // SkyWarsModel.java
 package softwareDevelopment2Coursework;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -196,13 +197,22 @@ public class SkyWarsModel implements Serializable{
 	
 	// Save and load game functionalities 
 	public void saveGame(String fileName) {
-	    try (FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-	         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+	    try {
+	        File savedGamesFolder = new File("Saved Games");
+	        if (!savedGamesFolder.exists()) {
+	            savedGamesFolder.mkdir();
+	        }
+	        File saveFile = new File(savedGamesFolder, fileName);
+	        FileOutputStream fileOutputStream = new FileOutputStream(saveFile);
+	        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 	        objectOutputStream.writeObject(this);
+	        objectOutputStream.close();
+	        fileOutputStream.close();
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
 	}
+
 
 	public static SkyWarsModel loadGame(String fileName) {
 	    try (FileInputStream fileInputStream = new FileInputStream(fileName);

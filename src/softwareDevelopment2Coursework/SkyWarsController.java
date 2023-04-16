@@ -162,7 +162,7 @@ public class SkyWarsController {
 	public void saveGame(String fileName) {
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	    String date = dateFormat.format(new Date());
-	    String newFileName = fileName + "_" + date;
+	    String newFileName = "SAVE_GAME_" + fileName + "_" + date;
 	    model.saveGame(newFileName);
 	    JOptionPane.showMessageDialog(null, "Game Saved");
 	}

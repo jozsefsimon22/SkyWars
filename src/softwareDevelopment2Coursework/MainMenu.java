@@ -65,8 +65,9 @@ public class MainMenu extends JFrame {
 		    public void actionPerformed(ActionEvent e) {
 		        JFileChooser openFile = new JFileChooser();
 
-		        // Set the default directory for JFileChooser to the application folder
-		        openFile.setCurrentDirectory(new File(System.getProperty("user.dir")));
+		        // Set the current directory of JFileChooser to the Saved Games folder
+		        File savedGamesFolder = new File("Saved Games");
+		        openFile.setCurrentDirectory(savedGamesFolder);
 
 		        // The return value of showOpenDialog method indicates whether the user selected a file or not
 		        int returnValue = openFile.showOpenDialog(null);
@@ -82,8 +83,6 @@ public class MainMenu extends JFrame {
 		        }
 		    }
 		});
-
-
 		panelCentre.add(btnLoadGame, "1, 4, fill, fill");
 
 		JButton btnExit = new JButton("Exit");
