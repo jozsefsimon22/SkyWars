@@ -17,7 +17,7 @@ import grid.Grid;
 import ships.Ship;
 import ships.ShipGenerator;
 
-public class SkyWarsModel implements Serializable{
+public class SkyWarsModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Grid gameGrid;
 	private int prevRow = -1;
@@ -26,18 +26,12 @@ public class SkyWarsModel implements Serializable{
 	private Random random = new Random();
 	private int score;
 
+	// Constructor
 	public SkyWarsModel(Grid gameGrid) {
 		this.gameGrid = gameGrid;
 	}
 
-	public Grid getGameGrid() {
-		return gameGrid;
-	}
-	
-	public void setGameGrid(Grid gameGrid) {
-		this.gameGrid = gameGrid;
-	}
-
+	// Method for allocating the Master-ship to a random location in the grid
 	public void allocateMasterShipRandomly() {
 		int row = random.nextInt(gameGrid.getCol());
 		int col = random.nextInt(gameGrid.getRow());
@@ -65,19 +59,13 @@ public class SkyWarsModel implements Serializable{
 		return (rowDiff <= 1 && colDiff <= 1) && !(rowDiff == 0 && colDiff == 0);
 	}
 
+	// Method for displaying a warning if the move is not valid
 	public void notValidMove() {
 		JOptionPane.showMessageDialog(null, "You can only move to neighbouring squares.", null,
 				JOptionPane.WARNING_MESSAGE);
 	}
 
-	public int getPrevRow() {
-		return prevRow;
-	}
-
-	public int getPrevCol() {
-		return prevCol;
-	}
-
+	// Method for resetting the game
 	public void resetGame() {
 		Grid sky = new Grid();
 		setGameGrid(sky);
@@ -97,45 +85,43 @@ public class SkyWarsModel implements Serializable{
 // or ends the game if the number of enemy ships is greater than or equal to the corresponding
 // defensive/offensive value in the Mode enum.
 	public boolean checkConflict(int row, int col, Mode mode) {
-	    boolean isGameOver = false;
-	    grid.Square tempSquare = gameGrid.getSquare(row, col);
-	    if (tempSquare.getEnemyShipsAtSquare().size() > 0) {
-	        if (mode == Mode.DEFENSIVE) {
-	            if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.DEFENSIVE.getValue()) {
-	                isGameOver = true;
-	            } else {
-	                tempSquare.removeAllShip();
-	                score++;
-	            }
-	        } else if (mode == Mode.OFFENSIVE) {
-	            if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.OFFENSIVE.getValue()) {
-	                isGameOver = true;
-	            } else {
-	                tempSquare.removeAllShip();
-	                score++;
-	            }
-	        }
-	    }
-	    return isGameOver;
+		boolean isGameOver = false;
+		grid.Square tempSquare = gameGrid.getSquare(row, col);
+		if (tempSquare.getEnemyShipsAtSquare().size() > 0) {
+			if (mode == Mode.DEFENSIVE) {
+				if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.DEFENSIVE.getValue()) {
+					isGameOver = true;
+				} else {
+					tempSquare.removeAllShip();
+					score++;
+				}
+			} else if (mode == Mode.OFFENSIVE) {
+				if (tempSquare.getEnemyShipsAtSquare().size() >= Mode.OFFENSIVE.getValue()) {
+					isGameOver = true;
+				} else {
+					tempSquare.removeAllShip();
+					score++;
+				}
+			}
+		}
+		return isGameOver;
 	}
 
-	
+	// Method for handling game over
 	public int gameOver() {
-	    String output;
+		String output;
 
-	    output = "Game Over\n";
-	    output += "Score: " + score;
+		output = "Game Over\n";
+		output += "Score: " + score;
 
-	    Object[] options = {"Return to Main Menu", "Exit"};
-	    int choice = JOptionPane.showOptionDialog(null, output, "Game Over",
-	            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-	            null, options, options[0]);
+		Object[] options = { "Return to Main Menu", "Exit" };
+		int choice = JOptionPane.showOptionDialog(null, output, "Game Over", JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-	    return choice;
+		return choice;
 	}
 
-
-	// Move enemy ships to a new location
+	// Method for moving enemy ships to a new location
 	public void enemyShipMove() {
 		Grid newGrid = new Grid();
 		int tempRow;
@@ -165,6 +151,7 @@ public class SkyWarsModel implements Serializable{
 		this.gameGrid = newGrid;
 	}
 
+	// Method for switching between modes (OFFENSIVE and DEFENSIVE)
 	public Mode modeSwitcher(Mode currentMode) {
 		if (currentMode == Mode.OFFENSIVE) {
 			return Mode.DEFENSIVE;
@@ -173,6 +160,7 @@ public class SkyWarsModel implements Serializable{
 		}
 	}
 
+	// Method for counting the total number of enemy ships in the sky/grid
 	public int getEnemyShipsInSky() {
 		int enemyShips = 0;
 		for (int row = 0; row < gameGrid.getRow(); row++) {
@@ -183,45 +171,63 @@ public class SkyWarsModel implements Serializable{
 		return enemyShips;
 	}
 
+	// Method for returning the number of enemy ships at a specific square
+	public int noOfEnemyShipsAtSquare(int row, int col) {
+		int output;
+
+		output = getGameGrid().getSquare(row, col).getEnemyShipsAtSquare().size();
+
+		return output;
+	}
+
+	// Save and load game functionalities
+	public void saveGame(String fileName) {
+		try {
+			File savedGamesFolder = new File("Saved Games");
+			if (!savedGamesFolder.exists()) {
+				savedGamesFolder.mkdir();
+			}
+			File saveFile = new File(savedGamesFolder, fileName);
+			FileOutputStream fileOutputStream = new FileOutputStream(saveFile);
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+			objectOutputStream.writeObject(this);
+			objectOutputStream.close();
+			fileOutputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static SkyWarsModel loadGame(String fileName) {
+		try (FileInputStream fileInputStream = new FileInputStream(fileName);
+				ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+			return (SkyWarsModel) objectInputStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// Getters and setters
+	public Grid getGameGrid() {
+		return gameGrid;
+	}
+
+	public void setGameGrid(Grid gameGrid) {
+		this.gameGrid = gameGrid;
+	}
+
+	public int getPrevRow() {
+		return prevRow;
+	}
+
+	public int getPrevCol() {
+		return prevCol;
+	}
+	
 	public int getScore() {
 		return score;
 	}
-	
-	public int noOfEnemyShipsAtSquare(int row, int col) {
-		int output;
-		
-		output = getGameGrid().getSquare(row, col).getEnemyShipsAtSquare().size();
-		
-		return output;
-	}
-	
-	// Save and load game functionalities 
-	public void saveGame(String fileName) {
-	    try {
-	        File savedGamesFolder = new File("Saved Games");
-	        if (!savedGamesFolder.exists()) {
-	            savedGamesFolder.mkdir();
-	        }
-	        File saveFile = new File(savedGamesFolder, fileName);
-	        FileOutputStream fileOutputStream = new FileOutputStream(saveFile);
-	        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-	        objectOutputStream.writeObject(this);
-	        objectOutputStream.close();
-	        fileOutputStream.close();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	}
 
-
-	public static SkyWarsModel loadGame(String fileName) {
-	    try (FileInputStream fileInputStream = new FileInputStream(fileName);
-	         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
-	        return (SkyWarsModel) objectInputStream.readObject();
-	    } catch (IOException | ClassNotFoundException e) {
-	        e.printStackTrace();
-	    }
-	    return null;
-	}
 
 }// end class

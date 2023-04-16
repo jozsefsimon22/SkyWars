@@ -19,6 +19,7 @@ public class Ship implements Serializable {
     private transient Image scaledImage;
     private transient ImageIcon icon;
 
+    // Getters and setters for type and icon fields
     public String getType() {
         return type;
     }
